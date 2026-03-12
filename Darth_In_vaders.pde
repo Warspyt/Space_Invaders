@@ -25,6 +25,7 @@ boolean isFired = false;
 //alien
 //aliens
 int numAliens = 18;
+int aliensAlive = numAliens;
 
 int[] alX = new int[numAliens];
 int[] alY = new int[numAliens];
@@ -45,9 +46,11 @@ int vaderY = 140;
 
 int vaderWidth = 75;
 int vaderHeight = 75;
+int vaderLife = 100;
 
-float vaderSpeed = 2;
+float vaderSpeed = 3;
 int vaderDirection = 1;
+float probShot = 0.05;
 
 // disparo de Vader
 int vShotX;
@@ -228,8 +231,14 @@ void game(){
   text("Score: ", 120,75);
   text(score, 190, 75);
   
-  if(score >= numAliens){
+  if(score >= 28){
    stage = 2; 
+  }
+  
+   if(aliensAlive == 0){
+     vShotSpeed = 8;
+     probShot = 0.9;
+     vaderSpeed = 6;
   }
   
 }
@@ -281,6 +290,7 @@ void fireRockets(){
       alienAlive[i] = false;
       r1Position = 2;
       score++;
+      aliensAlive--; 
     }
     
   }
@@ -359,17 +369,41 @@ void moveAliens(){
 
 void moveVader(){
 
+  textFont(body);
+  textSize(10);
+  fill(255,0,0);
+  text(vaderLife, vaderX, vaderY-20);
+  
   vaderX += vaderSpeed * vaderDirection;
 
   if(vaderX > width - 90 || vaderX < 90){
     vaderDirection *= -1;
   }
+  
+  //collision
+  if(r1X >= vaderX - vaderWidth/2 &&
+       r1X <= vaderX + vaderWidth/2 &&
+       r1Y >= vaderY - vaderHeight/2 &&
+       r1Y <= vaderY + vaderHeight/2){
+       
+       if(vaderLife >= 10){
+         score = score+1;
+         vaderLife = vaderLife -10;
+         r1Position = 2;
+       }
+       else{
+         score = score+1;
+        vaderSpeed = 0;
+        vaderX = -1000;
+        r1Position = 2;
+       }
+      }
 
 }
 
 void vaderShoot(){
-
-  if(!vaderFiring && random(1) < 0.05){
+  
+  if(!vaderFiring && random(1) < probShot){
     
     vaderFiring = true;
     vShotX = vaderX;
