@@ -1,8 +1,10 @@
 import ddf.minim.*;
 
+//sound
 Minim minim;
 AudioPlayer audioPlayer;
 AudioPlayer audioShot;
+AudioPlayer vaderPlayer;
 
 //player
 int pX = 400;
@@ -47,6 +49,7 @@ int vaderY = 140;
 int vaderWidth = 75;
 int vaderHeight = 75;
 int vaderLife = 100;
+boolean vaderFigth = false;
 
 float vaderSpeed = 3;
 int vaderDirection = 1;
@@ -58,6 +61,18 @@ int vShotY;
 int vShotSpeed = 4;
 
 boolean vaderFiring = false;
+
+//meteors
+
+int m1X = 150;
+int m1Y = 420;
+int m1Size = 50;
+int m2X = 400;
+int m2Y = 420;
+int m2Size = 50;
+int m3X = 650;
+int m3Y = 420;
+int m3Size = 50;
 
 //counters
 int score = 0;
@@ -73,6 +88,7 @@ int stage = 0;
 PImage playerImage;
 PImage soldierImage;
 PImage darthVader;
+PImage meteorImage;
 
 PFont title;
 PFont scoreFont;
@@ -90,8 +106,9 @@ void setup(){
   textAlign(CENTER);
   
   minim = new Minim(this);
-  audioPlayer = minim.loadFile("imperialMarch.mp3");
-  audioPlayer.play();
+  audioPlayer = minim.loadFile("StarWarsIntro.mp3");
+  vaderPlayer = minim.loadFile("imperialMarch.mp3");
+  audioPlayer.loop();
   audioShot = minim.loadFile("lightsaber.mp3");
   
   
@@ -223,6 +240,7 @@ void game(){
   vaderShoot();
   moveAliens();
   fireRockets();
+  meteors();
   
   //score bar
   fill(255);
@@ -231,11 +249,21 @@ void game(){
   text("Score: ", 120,75);
   text(score, 190, 75);
   
-  if(score >= 28){
+  if(vaderLife == 0 && !vaderFigth){
+   vaderLife = 100; 
+  }
+  
+  if(vaderFigth && vaderLife <= 0){
    stage = 2; 
   }
   
-   if(aliensAlive == 0){
+   if(aliensAlive == 0 && !vaderFigth){
+     
+     vaderFigth = true;
+     
+     audioPlayer.pause();
+     vaderPlayer.play();
+     
      vShotSpeed = 8;
      probShot = 0.9;
      vaderSpeed = 6;
@@ -263,7 +291,7 @@ void fireRockets(){
    rect(r1X, r1Y, rWidth, rHeight);
    
    
-   if(r1Y <= 0){
+   if(r1Y <= 120){
      r1Position = 2;
     }
   }
@@ -297,6 +325,55 @@ void fireRockets(){
   }
 }
 
+void meteors(){
+ 
+  image(meteorImage, m1X, m1Y, m1Size, m1Size);
+  image(meteorImage, m2X, m2Y, m2Size, m2Size);
+  image(meteorImage, m3X, m3Y, m3Size, m3Size);
+  
+  //collisions
+  for(int i = 0; i<3; i++){
+    if(r1X >= m1X-m1Size/2 && r1X <= m1X+m1Size/2 && r1Y >= m1Y-m1Size/2 && r1Y <= m1Y+m1Size/2){
+    if(m1Size >= 20){
+     m1Size = m1Size-10;
+     r1Position = 2;
+    } else{
+     m1X = -1000;
+     r1Position = 2;
+    }
+  }
+  }
+  
+  if(r1X >= m1X-m1Size/2 && r1X <= m1X+m1Size/2 && r1Y >= m1Y-m1Size/2 && r1Y <= m1Y+m1Size/2){
+    if(m1Size >= 20){
+     m1Size = m1Size-10;
+     r1Position = 2;
+    } else{
+     m1X = -1000;
+     r1Position = 2;
+    }
+  }
+    if(r1X >= m2X-m2Size/2 && r1X <= m2X+m2Size/2 && r1Y >= m2Y-m2Size/2 && r1Y <= m2Y+m2Size/2){
+    if(m2Size >= 20){
+     m2Size = m2Size-10;
+     r1Position = 2;
+    } else{
+     m2X = -1000;
+     r1Position = 2;
+    }
+  }
+    if(r1X >= m3X-m3Size/2 && r1X <= m3X+m3Size/2 && r1Y >= m3Y-m3Size/2 && r1Y <= m3Y+m3Size/2){
+    if(m3Size >= 20){
+     m3Size = m3Size-10;
+     r1Position = 2;
+    } else{
+     m3X = -1000;
+     r1Position = 2;
+    }
+  }
+  
+}
+
 void keyPressed(){
 
   if(keyCode == LEFT && keyPressed){
@@ -324,9 +401,8 @@ void keyTyped(){
 void preload(){
   playerImage = loadImage("ship.png");
   soldierImage = loadImage("storm.png");
-  darthVader = loadImage("Darth_Vader.png");
   darthVader = loadImage("darth.JPG");
-  
+  meteorImage = loadImage("meteor.png");
   
 }
 
@@ -381,23 +457,32 @@ void moveVader(){
   }
   
   //collision
-  if(r1X >= vaderX - vaderWidth/2 &&
+  if(  r1X >= vaderX - vaderWidth/2 &&
        r1X <= vaderX + vaderWidth/2 &&
        r1Y >= vaderY - vaderHeight/2 &&
        r1Y <= vaderY + vaderHeight/2){
        
+       if(!vaderFigth){
+       r1Position = 2;
+       
+       }else{
        if(vaderLife >= 10){
          score = score+1;
          vaderLife = vaderLife -10;
          r1Position = 2;
        }
        else{
+         if(vaderFigth){
+         vaderLife = 100;
+         }else{
          score = score+1;
         vaderSpeed = 0;
         vaderX = -1000;
         r1Position = 2;
+         }
        }
       }
+       }
 
 }
 
