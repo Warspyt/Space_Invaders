@@ -90,7 +90,7 @@ int lives = 3;
 int totalTime;
 int splashTime;
 int gameTime;
-int timeLimit = 40;
+int timeLimit = 90;
 
 //multimedia
 //
