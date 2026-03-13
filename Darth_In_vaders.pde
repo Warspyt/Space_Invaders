@@ -82,6 +82,10 @@ int stage = 0;
 //stage 1 = game
 //stage 2 = win
 //stage 3 = lose
+int totalTime;
+int splashTime;
+int gameTime;
+int timeLimit = 10;
 
 //multimedia
 //
@@ -130,6 +134,9 @@ void setup(){
 }
 
 void draw(){
+  
+  // Start timer
+  totalTime = millis();
  
   if(stage == 0){
     splash();
@@ -149,6 +156,10 @@ void draw(){
   
 }
 void splash(){
+  
+  //Start timer
+  splashTime = totalTime;
+  
   background(0);
   
   title = createFont("Renegado-ABym.otf", 80);
@@ -242,12 +253,24 @@ void game(){
   fireRockets();
   meteors();
   
+  
+// Timer functions
+  splashTime = splashTime;
+  gameTime = int((totalTime - splashTime)/1000);
+  
   //score bar
   fill(255);
   textSize(25);
   textFont(scoreFont);
   text("Score: ", 120,75);
   text(score, 190, 75);
+  
+  //timer bar
+  fill(255);
+  textSize(25);
+  textFont(scoreFont);
+  text("Time: ", 520,75);
+  text(gameTime, 570, 75);
   
   if(vaderLife == 0 && !vaderFigth){
    vaderLife = 100; 

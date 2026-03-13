@@ -1,15 +1,15 @@
 // Videojuego Space Invaders
 
-// Configuraciones
-void setup() {
+//// Configuraciones
+//void setup() {
   
   
   
-}
+//}
 
-// Render
-void draw(){
+//// Render
+//void draw(){
 
   
 
-}
+//}
