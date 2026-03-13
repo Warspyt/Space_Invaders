@@ -1,3 +1,8 @@
+// Videojuego Space Invaders
+// Integrantes:
+// Julio Cesar Albadan Sarmiento
+// Jay Alvarez Baez
+
 import ddf.minim.*;
 
 //sound
@@ -77,15 +82,15 @@ int m3Size = 50;
 //counters
 int score = 0;
 int stage = 0;
-
 //stage 0 = splash
 //stage 1 = game
 //stage 2 = win
 //stage 3 = lose
+int lives = 3;
 int totalTime;
 int splashTime;
 int gameTime;
-int timeLimit = 10;
+int timeLimit = 40;
 
 //multimedia
 //
@@ -148,7 +153,7 @@ void draw(){
     win();
   }
   if(stage == 3){
-  lose();
+    lose();
   }
   if(mousePressed == true){
     stage = 1;
@@ -185,7 +190,7 @@ void splash(){
 }
 
 void win(){
-  background(255,0,0);
+  background(0,255,0);
   
   title = createFont("Renegado-ABym.otf", 80);
   body = createFont("Renegado-ABym.otf", 15);
@@ -199,7 +204,11 @@ void win(){
   text("VICTORIA", width/2, 200);
   
   textFont(body);
-  text("REFRESCA PARA JUGAR DE NUEVO", width/2, 250);
+  text("TU TIEMPO FUE", width/2, 280);
+  text(gameTime, width/2, 310);
+  
+  textFont(body);
+  text("REFRESCA PARA JUGAR DE NUEVO", width/2, 350);
 }
 
 void lose(){
@@ -265,19 +274,30 @@ void game(){
   text("Score: ", 120,75);
   text(score, 190, 75);
   
+  text("Lives: ", 310,75);
+  text(lives, 370,75);
+  
   //timer bar
   fill(255);
   textSize(25);
   textFont(scoreFont);
-  text("Time: ", 520,75);
-  text(gameTime, 570, 75);
+  text("Time: ", 480,75);
+  text(gameTime, 530, 75);
+  
+  //countdown bar
+  fill(255);
+  textSize(25);
+  textFont(scoreFont);
+  text("CD: ", 650,75);
+  text(timeLimit - gameTime, 710, 75);
   
   if(vaderLife == 0 && !vaderFigth){
    vaderLife = 100; 
   }
   
   if(vaderFigth && vaderLife <= 0){
-   stage = 2; 
+    gameTime = gameTime;
+    stage = 2; 
   }
   
    if(aliensAlive == 0 && !vaderFigth){
@@ -292,6 +312,9 @@ void game(){
      vaderSpeed = 6;
   }
   
+  if(gameTime >= timeLimit || lives <= 0){
+    stage = 3;
+  }  
 }
 
 void fireRockets(){
@@ -536,7 +559,16 @@ void vaderShoot(){
        vShotY >= pY - pHeight/2 &&
        vShotY <= pY + pHeight/2){
 
-      stage = 3;
+      lives--;
+
+      pX = 400;
+      pY = 500;
+      
+      vaderFiring = false;
+      
+      if(lives <= 0){
+        stage = 3;
+      }
     }
 
   }
